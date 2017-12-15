@@ -34,7 +34,7 @@ class Node(QtWidgets.QWidget):
         self.blockedText = QtWidgets.QLabel("Estado:\t" + "Desbloqueado")
         self.blockButton = QtWidgets.QPushButton("Bloquear")
 
-        self.adminStateTest = QtWidgets.QLabel("Activo")
+        self.adminStateTest = QtWidgets.QLabel("No Admin")
         self.pledgeAdminButton = QtWidgets.QPushButton("Solicitar Administrador")
         self.eventRepoterTextEdit = QtWidgets.QTextEdit("Ningun Evento")
 
@@ -131,6 +131,7 @@ class Node(QtWidgets.QWidget):
 
     def notAdmin(self):
         self._iAdmin = False
+        self.adminStateTest.setText("No Admin")
 
     def getState(self):
         return not self._blocked
@@ -179,12 +180,13 @@ class Node(QtWidgets.QWidget):
             self.pushMessage("No se encontro un posible adminsitrador, asumiendo administracion")
             self._iAdmin = True
             self._adminId = self._nodeId
+            self.adminStateTest.setText("Admin")
             self.populateAdmin()
 
     def populateAdmin(self):
         for ref in self._hub.getNodeList():
             ref.setAdmin(self._adminId)
-            if ref.getState():
+            if ref.getState() and ref != self:
                 ref.notAdmin()
             else:
                 pass
